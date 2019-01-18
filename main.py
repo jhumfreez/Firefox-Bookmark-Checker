@@ -4,23 +4,28 @@ import requests
 import sqlite3
 import os
 
-def alive(url):
-    alive = False
-    r=requests.get(url)
-    if(r.status_code == 200):
-        alive = True
-    return alive
+def getStatus(url):
+    status = 0
+    try:
+        r = requests.get(url)
+        status = r.status_code
+    except Exception as e:
+        print("Error for "+url)
+        print(str(e))
+    return status
+
 
 def testurl(url):
-    
-    if(url[0][:4] != 'http'):
+    if url[:4] != 'http':
         return
-    if not alive(url):
-        msg = "Dead link: "+url
+    status = getStatus(url)
+    if status != 200 and status != 401:
+        msg = "Link failed {0}\n\t with code {1}".format(url, status)
         print(msg)
         with open('output.log', 'a') as f:
-            f.write(msg)
-    
+            f.write(msg+'\n\n')
+
+
 def connect(db_path):
     # loop rows, get url, test url
     conn = sqlite3.connect(db_path)
@@ -35,11 +40,13 @@ def connect(db_path):
     results = c.fetchall()
     for url_tuple in results:
         testurl(url_tuple[0])
- 
+
+
 def main():
     getLocation()
     db_path = os.environ['DB_PATH']
     connect(db_path)
+
 
 if __name__ == "__main__":
     main()
