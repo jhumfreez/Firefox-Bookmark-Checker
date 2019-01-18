@@ -5,6 +5,7 @@ import sqlite3
 import os
 
 def getStatus(url):
+    # TODO: Fix error prone get method
     status = 0
     try:
         r = requests.get(url)
@@ -43,9 +44,11 @@ def connect(db_path):
 
 
 def main():
+    os.remove('output.log')
     getLocation()
     db_path = os.environ['DB_PATH']
     connect(db_path)
+    print("Task completed!")
 
 
 if __name__ == "__main__":
