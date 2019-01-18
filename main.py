@@ -19,7 +19,7 @@ def testurl(url):
     if url[:4] != 'http':
         return
     status = getStatus(url)
-    if status != 200 and status != 401:
+    if status == 404:
         msg = "Link failed {0}\n\t with code {1}".format(url, status)
         print(msg)
         with open('output.log', 'a') as f:
